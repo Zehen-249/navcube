@@ -1,81 +1,86 @@
-# pyside-navicube
+# NavCube
 
-A NaviCube orientation widget for PySide6 applications, inspired by the one in FreeCAD. Drop it into any 3D viewport — it doesn't care whether you're using OpenCASCADE, VTK, raw OpenGL, or something else entirely.
+A 3D orientation cube widget for PySide6. Works with OpenCASCADE, VTK, raw OpenGL, or anything else that has a camera. No renderer dependency in the core widget.
 
-**[Documentation](https://nishikantmandal007.github.io/pyside-navicube/)** | **[PyPI](https://pypi.org/project/pyside-navicube/)** | **[GitHub](https://github.com/nishikantmandal007/pyside-navicube)**
+**[Docs](https://nishikantmandal007.github.io/pyside-navicube/)** | **[PyPI](https://pypi.org/project/navcube/)** | **[GitHub](https://github.com/nishikantmandal007/pyside-navicube)**
 
 ---
 
 ## Why this exists
 
-Most NaviCube implementations are tightly coupled to a specific renderer. If you're using pythonocc and want a cube, you're stuck with OCC's built-in one (which is hard to style and lives inside the OpenGL context). Same story with VTK.
+This started inside [Osdag](https://osdag.fossee.in) — an open-source structural steel design application built on PythonOCC. Osdag opens multiple design tabs simultaneously, each with its own OCC 3D renderer. We wanted a NaviCube on each one.
 
-This library keeps the widget completely separate from any renderer. The cube is just a PySide6 widget that emits signals — you decide what happens when someone clicks a face. There's a ready-made connector for OCC and VTK, but wiring up anything else takes about 10 lines.
+The problem was OCC's built-in ViewCube. It lives inside the OpenGL context, which means it shares the same lifecycle as the renderer. With multiple tabs being opened, switched, and closed, we kept running into crashes — OCC objects outliving their context, double-free errors on tab close, the cube rendering into the wrong viewport. It was a lifecycle management problem with no clean solution inside OCC's architecture.
+
+The fix was to take the cube out of OCC entirely. NavCube is a plain PySide6 QWidget that renders itself with QPainter. It has no OpenGL, no OCC handles, no shared context. It just draws a cube and emits signals. The renderer talks to it through two function calls. When a tab closes, the widget gets deleted like any other Qt widget — no special teardown, no OCC entanglement.
+
+That separation fixed the crashes. It also made the cube work with any renderer, which turned out to be useful for other projects using VTK and custom OpenGL.
 
 ---
 
 ## Install
 
 ```bash
-pip install pyside-navicube
+pip install navcube
 ```
 
 With the OCC connector:
 ```bash
-pip install pyside-navicube[occ]
+pip install navcube[occ]
 ```
 
 With VTK:
 ```bash
-pip install pyside-navicube[vtk]
+pip install navcube[vtk]
 ```
 
 ---
 
-## Basic usage
+## The basics
 
 ```python
-from navicube import NaviCubeOverlay
+from navcube import NavCubeOverlay
 
-cube = NaviCubeOverlay(parent=your_window)
+cube = NavCubeOverlay(parent=your_window)
 cube.show()
 
-# Tell the navicube where the camera is pointing
+# Tell the cube where the camera is pointing
 # dx/dy/dz = inward direction (eye → scene), ux/uy/uz = up vector
 cube.push_camera(dx, dy, dz, ux, uy, uz)
 
 # React when someone clicks a face
-cube.viewOrientationRequested.connect(your_camera_update_fn)
 # px/py/pz comes out as outward direction — pass straight to OCC SetProj
+cube.viewOrientationRequested.connect(your_camera_update_fn)
 
-# Let the cube know when a drag starts/ends (enables smoothing)
-cube.set_interaction_active(True)   # on mouse press
-cube.set_interaction_active(False)  # on mouse release
+# Tell the cube when a drag starts/ends — enables jitter smoothing
+cube.set_interaction_active(True)   # mouse press
+cube.set_interaction_active(False)  # mouse release
 ```
 
 ---
 
 ## OCC / pythonocc
 
-If you're using pythonocc, the `OCCNaviCubeSync` connector handles all of the above automatically — polling, signal wiring, interaction hints, the works.
+The `OCCNavCubeSync` connector handles polling, signal wiring, and interaction hints automatically.
 
 ```python
-from navicube import NaviCubeOverlay
-from navicube.connectors.occ import OCCNaviCubeSync
+from navcube import NavCubeOverlay
+from navcube.connectors.occ import OCCNavCubeSync
 
-# Parent to your tab or window, NOT to the OCC canvas itself
-# (avoids OpenGL repaint corruption on Linux)
-cube = NaviCubeOverlay(parent=tab_widget)
+# Parent to your tab or window — NOT to the OCC canvas
+# This is important on Linux: parenting to the OCC widget causes
+# transparent repaint corruption because of how OCC owns the GL context
+cube = NavCubeOverlay(parent=tab_widget)
 cube.show()
 
-# Call this once your OCC view is initialised
-sync = OCCNaviCubeSync(occ_view, cube)
+# Call once your OCC view is ready
+sync = OCCNavCubeSync(occ_view, cube)
 
-# In mousePressEvent / mouseReleaseEvent on your viewer:
-sync.set_interaction_active(True)
-sync.set_interaction_active(False)
+# In your viewer's mouse handlers:
+sync.set_interaction_active(True)   # press
+sync.set_interaction_active(False)  # release
 
-# Clean up when the view is torn down
+# On viewer teardown:
 sync.teardown()
 ```
 
@@ -84,49 +89,50 @@ sync.teardown()
 ## VTK / PyVista
 
 ```python
-from navicube import NaviCubeOverlay
-from navicube.connectors.vtk import VTKNaviCubeSync
+from navcube import NavCubeOverlay
+from navcube.connectors.vtk import VTKNavCubeSync
 
-cube = NaviCubeOverlay(parent=vtk_widget)
+cube = NavCubeOverlay(parent=vtk_widget)
 cube.show()
 
-sync = VTKNaviCubeSync(renderer, cube, render_window=vtk_widget.GetRenderWindow())
+sync = VTKNavCubeSync(renderer, cube, render_window=vtk_widget.GetRenderWindow())
 ```
 
 ---
 
 ## Styling
 
-Everything visual is configurable through `NaviCubeStyle`. You can set face colors, hover colors, font, animation speed, opacity — all of it. Changes can be applied at runtime too.
+Every visual aspect is configurable through `NavCubeStyle`. The style can also be swapped at runtime.
 
 ```python
-from navicube import NaviCubeOverlay, NaviCubeStyle
+from navcube import NavCubeOverlay, NavCubeStyle
 
-style = NaviCubeStyle(
+style = NavCubeStyle(
     size=140,
-    face_color=(215, 220, 245),
-    edge_color=(242, 198, 208),
-    corner_color=(195, 228, 210),
-    hover_color=(218, 62, 112, 250),
+    theme="light",
+    face_color=(205, 215, 252),       # periwinkle blue
+    edge_color=(252, 186, 208),       # rose-pink bevel
+    corner_color=(182, 238, 210),     # mint bevel
+    hover_color=(218, 62, 112, 250),  # raspberry
     text_color=(28, 26, 68),
     show_gizmo=True,
     inactive_opacity=0.65,
     animation_ms=300,
 )
 
-cube = NaviCubeOverlay(parent=your_window, style=style)
+cube = NavCubeOverlay(parent=your_window, style=style)
 
-# Or change it later
-cube.set_style(NaviCubeStyle(size=160, theme="dark"))
+# Change it later
+cube.set_style(NavCubeStyle(theme="dark", size=160))
 ```
 
-The full list of style options is in the [Style Reference](https://nishikantmandal007.github.io/pyside-navicube/style-reference).
+The full list of style fields is in the [Style Reference](https://nishikantmandal007.github.io/pyside-navicube/style-reference).
 
 ---
 
 ## Coordinate conventions
 
-The cube uses **Z-up** by default (same as OCC, FreeCAD, Blender).
+Z-up by default (OCC, FreeCAD, Blender).
 
 | Direction | Convention |
 |---|---|
@@ -137,9 +143,9 @@ For Y-up engines (Three.js, Unity, GLTF):
 
 ```python
 import numpy as np
-from navicube import NaviCubeOverlay
+from navcube import NavCubeOverlay
 
-class YUpNaviCube(NaviCubeOverlay):
+class YUpNavCube(NavCubeOverlay):
     _WORLD_ROT = np.array([
         [1, 0,  0],
         [0, 0, -1],
@@ -151,10 +157,10 @@ class YUpNaviCube(NaviCubeOverlay):
 
 ## Inline / dock mode
 
-By default the cube is an overlay (floats over the viewport). To use it as a regular widget inside a layout:
+The cube is an overlay by default — it floats over the viewport. To use it inside a layout instead:
 
 ```python
-cube = NaviCubeOverlay(parent=panel, overlay=False)
+cube = NavCubeOverlay(parent=panel, overlay=False)
 layout.addWidget(cube)
 ```
 
@@ -162,12 +168,13 @@ layout.addWidget(cube)
 
 ## Writing a connector for another renderer
 
-Three things:
+Three things your connector needs to do:
+
 1. Poll or subscribe to camera changes → call `cube.push_camera()`
 2. Connect `cube.viewOrientationRequested` → update your renderer camera
 3. Call `cube.set_interaction_active(True/False)` on drag start/end
 
-`navicube/connectors/occ.py` is a complete reference (~100 lines).
+`navcube/connectors/occ.py` is a complete reference (~100 lines).
 
 ---
 
@@ -177,7 +184,7 @@ Three things:
 - PySide6
 - numpy
 
-Optional: `pythonocc-core` (for the OCC connector), `vtk` (for the VTK connector).
+Optional: `pythonocc-core` (OCC connector), `vtk` (VTK connector).
 
 ---
 

@@ -5,7 +5,7 @@ title: Coordinate Systems
 
 # Coordinate Systems
 
-Understanding how pyside-navicube maps between its internal coordinate space and your application's world space.
+Understanding how navcube maps between its internal coordinate space and your application's world space.
 
 ---
 
@@ -18,7 +18,7 @@ Understanding how pyside-navicube maps between its internal coordinate space and
 | **Z-up** | OCC, FreeCAD, Blender (world), AutoCAD, Civil engineering | +Z | -Y or +X |
 | **Y-up** | Three.js, glTF, Unity, Unreal, most game engines | +Y | -Z or +X |
 
-pyside-navicube renders internally in **Z-up** space. The face labeled "TOP" always corresponds to the +Z direction in the internal coordinate system. The `_WORLD_ROT` matrix bridges between internal Z-up space and your application's world space.
+navcube renders internally in **Z-up** space. The face labeled "TOP" always corresponds to the +Z direction in the internal coordinate system. The `_WORLD_ROT` matrix bridges between internal Z-up space and your application's world space.
 
 ---
 
@@ -71,13 +71,13 @@ This matrix rotates -90 degrees around the X axis, turning Z-up into Y-up.
 
 ## Subclassing for Y-up
 
-The recommended way to use pyside-navicube with a Y-up engine is to subclass `NaviCubeOverlay` and set `_WORLD_ROT` as a class attribute:
+The recommended way to use navcube with a Y-up engine is to subclass `NavCubeOverlay` and set `_WORLD_ROT` as a class attribute:
 
 ```python
 import numpy as np
-from navicube import NaviCubeOverlay
+from navcube import NavCubeOverlay
 
-class YUpNaviCube(NaviCubeOverlay):
+class YUpNaviCube(NavCubeOverlay):
     """NaviCube configured for Y-up coordinate systems (Three.js, Unity, etc.)."""
     _WORLD_ROT = np.array([
         [1,  0,  0],
@@ -149,7 +149,7 @@ The navicube handles the negation internally. You never need to flip signs yours
 │         │ push_camera(dir, up)                           │
 │         ▼                                               │
 │  ┌─────────────────────────────┐                        │
-│  │     NaviCubeOverlay         │                        │
+│  │     NavCubeOverlay         │                        │
 │  │                             │                        │
 │  │  Internal: negates dir      │                        │
 │  │  for emission               │                        │
@@ -248,7 +248,7 @@ The camera looks toward the origin from the direction `(-1, +1, -1)` (normalized
 ### Left-handed Y-up (rare)
 
 ```python
-class LeftHandedYUpNaviCube(NaviCubeOverlay):
+class LeftHandedYUpNaviCube(NavCubeOverlay):
     _WORLD_ROT = np.array([
         [1,  0,  0],
         [0,  0,  1],
@@ -259,7 +259,7 @@ class LeftHandedYUpNaviCube(NaviCubeOverlay):
 ### Swapped X and Y
 
 ```python
-class SwappedXYNaviCube(NaviCubeOverlay):
+class SwappedXYNaviCube(NavCubeOverlay):
     _WORLD_ROT = np.array([
         [0,  1,  0],
         [1,  0,  0],

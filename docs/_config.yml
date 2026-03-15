@@ -1,5 +1,5 @@
-title: pyside-navicube
-description: FreeCAD-style NaviCube for PySide6 — zero renderer dependency
+title: NavCube
+description: A 3D orientation cube widget for PySide6 — renderer-agnostic, drop-in ready
 url: "https://nishikantmandal007.github.io"
 baseurl: "/pyside-navicube"
 

@@ -5,14 +5,14 @@ title: API Reference
 
 # API Reference
 
-Complete reference for all public classes, methods, and signals in pyside-navicube.
+Complete reference for all public classes, methods, and signals in navcube.
 
 ---
 
-## `NaviCubeOverlay`
+## `NavCubeOverlay`
 
 ```python
-from navicube import NaviCubeOverlay
+from navcube import NavCubeOverlay
 ```
 
 A PySide6 `QWidget` subclass that renders a FreeCAD-style NaviCube as a 2D overlay. It communicates with your 3D renderer exclusively through `push_camera()` (input) and `viewOrientationRequested` (output).
@@ -20,11 +20,11 @@ A PySide6 `QWidget` subclass that renders a FreeCAD-style NaviCube as a 2D overl
 ### Constructor
 
 ```python
-NaviCubeOverlay(
+NavCubeOverlay(
     parent: QWidget | None = None,
     *,
     overlay: bool = True,
-    style: NaviCubeStyle | None = None,
+    style: NavCubeStyle | None = None,
 )
 ```
 
@@ -32,7 +32,7 @@ NaviCubeOverlay(
 |:----------|:-----|:--------|:------------|
 | `parent` | `QWidget \| None` | `None` | Qt parent widget. For overlay mode, this should be the 3D viewport widget. |
 | `overlay` | `bool` | `True` | If `True`, creates a transparent floating tool window with `Qt.Tool \| Qt.FramelessWindowHint \| Qt.NoDropShadowWindowHint \| Qt.WindowDoesNotAcceptFocus` flags. If `False`, creates a plain opaque QWidget suitable for embedding in layouts or docks. |
-| `style` | `NaviCubeStyle \| None` | `None` | Visual and behavioral configuration. If `None`, uses `NaviCubeStyle()` with all defaults. |
+| `style` | `NavCubeStyle \| None` | `None` | Visual and behavioral configuration. If `None`, uses `NavCubeStyle()` with all defaults. |
 
 ### Signals
 
@@ -135,14 +135,14 @@ While active, `push_camera()` applies SLERP smoothing (alpha 0.65, approximately
 #### `set_style`
 
 ```python
-def set_style(self, style: NaviCubeStyle) -> None
+def set_style(self, style: NavCubeStyle) -> None
 ```
 
 Apply a new style at runtime. Forces a full rebuild and repaint.
 
 | Parameter | Description |
 |:----------|:------------|
-| `style` | A `NaviCubeStyle` instance with the desired configuration |
+| `style` | A `NavCubeStyle` instance with the desired configuration |
 
 This method:
 1. Stores the new style
@@ -161,7 +161,7 @@ This method:
 _WORLD_ROT: np.ndarray = np.eye(3)
 ```
 
-3x3 rotation matrix mapping from navicube's internal Z-up space to your application's world space. Override as a class attribute in a subclass for Y-up or other coordinate systems. See [Coordinate Systems](coordinate-systems) for details.
+3x3 rotation matrix mapping from navcube's internal Z-up space to your application's world space. Override as a class attribute in a subclass for Y-up or other coordinate systems. See [Coordinate Systems](coordinate-systems) for details.
 
 ### Properties
 
@@ -175,10 +175,10 @@ The ID string of the currently hovered element, or `None` if nothing is hovered.
 
 ---
 
-## `NaviCubeStyle`
+## `NavCubeStyle`
 
 ```python
-from navicube import NaviCubeStyle
+from navcube import NavCubeStyle
 ```
 
 A Python `dataclass` containing every visual and behavioral configuration parameter for the NaviCube widget. See the [Style Reference](style-reference) page for exhaustive documentation of every field.
@@ -186,17 +186,17 @@ A Python `dataclass` containing every visual and behavioral configuration parame
 ### Constructor
 
 ```python
-NaviCubeStyle(**kwargs)
+NavCubeStyle(**kwargs)
 ```
 
 All fields have defaults. Pass only the fields you want to customize:
 
 ```python
 # All defaults
-style = NaviCubeStyle()
+style = NavCubeStyle()
 
 # Customize specific fields
-style = NaviCubeStyle(size=150, theme="dark", animation_ms=300)
+style = NavCubeStyle(size=150, theme="dark", animation_ms=300)
 ```
 
 ### Fields summary
@@ -218,24 +218,24 @@ style = NaviCubeStyle(size=150, theme="dark", animation_ms=300)
 
 ---
 
-## `OCCNaviCubeSync`
+## `OCCNavCubeSync`
 
 ```python
-from navicube.connectors.occ import OCCNaviCubeSync
+from navcube.connectors.occ import OCCNavCubeSync
 ```
 
-Bridges an OCC `V3d_View` with a `NaviCubeOverlay` widget. Handles camera polling, signal connection, and teardown.
+Bridges an OCC `V3d_View` with a `NavCubeOverlay` widget. Handles camera polling, signal connection, and teardown.
 
 ### Constructor
 
 ```python
-OCCNaviCubeSync(view, navicube)
+OCCNavCubeSync(view, navicube)
 ```
 
 | Parameter | Type | Description |
 |:----------|:-----|:------------|
 | `view` | `V3d_View` | An initialized OCC V3d_View instance |
-| `navicube` | `NaviCubeOverlay` | The navicube widget to synchronize |
+| `navicube` | `NavCubeOverlay` | The navicube widget to synchronize |
 
 Starts polling immediately upon construction.
 
@@ -267,24 +267,24 @@ Stop polling and disconnect all signals. Call this when the OCC view is being de
 
 ---
 
-## `VTKNaviCubeSync`
+## `VTKNavCubeSync`
 
 ```python
-from navicube.connectors.vtk import VTKNaviCubeSync
+from navcube.connectors.vtk import VTKNavCubeSync
 ```
 
-Bridges a VTK renderer with a `NaviCubeOverlay` widget. Same API surface as `OCCNaviCubeSync`.
+Bridges a VTK renderer with a `NavCubeOverlay` widget. Same API surface as `OCCNavCubeSync`.
 
 ### Constructor
 
 ```python
-VTKNaviCubeSync(renderer, navicube)
+VTKNavCubeSync(renderer, navicube)
 ```
 
 | Parameter | Type | Description |
 |:----------|:-----|:------------|
 | `renderer` | VTK renderer | A VTK renderer instance |
-| `navicube` | `NaviCubeOverlay` | The navicube widget to synchronize |
+| `navicube` | `NavCubeOverlay` | The navicube widget to synchronize |
 
 ### Methods
 
@@ -294,7 +294,7 @@ VTKNaviCubeSync(renderer, navicube)
 def set_interaction_active(self, active: bool) -> None
 ```
 
-Same behavior as `OCCNaviCubeSync.set_interaction_active()`.
+Same behavior as `OCCNavCubeSync.set_interaction_active()`.
 
 #### `teardown`
 
@@ -302,7 +302,7 @@ Same behavior as `OCCNaviCubeSync.set_interaction_active()`.
 def teardown(self) -> None
 ```
 
-Same behavior as `OCCNaviCubeSync.teardown()`.
+Same behavior as `OCCNavCubeSync.teardown()`.
 
 ---
 

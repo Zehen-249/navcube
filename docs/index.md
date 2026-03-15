@@ -3,118 +3,104 @@ layout: default
 title: Home
 ---
 
-# pyside-navicube
+# NavCube
 
-A FreeCAD-style 3D orientation cube for **any PySide6 application**.
-Zero renderer dependency. Full style control. Drop-in ready.
+A 3D orientation cube widget for PySide6. Drop it into any 3D viewport — OCC, VTK, custom OpenGL, it doesn't matter. The widget has no renderer dependency.
 
 [Get Started]({{ '/getting-started' | relative_url }}){: .btn }
 [View on GitHub](https://github.com/nishikantmandal007/pyside-navicube){: .btn }
-[PyPI](https://pypi.org/project/pyside-navicube/){: .btn }
+[PyPI](https://pypi.org/project/navcube/){: .btn }
 
 ---
 
 ## Interactive Demo
 
-Drag the viewport to orbit. Click a face on the NaviCube (top-right) to snap to that view. Use the arrow buttons to step-orbit.
+Drag to orbit. Click a face to snap to that view. Use the arrow buttons to step-orbit.
 
 <div id="demo-canvas" style="width:100%; height:480px; border:1px solid #d0d7de; border-radius:8px; overflow:hidden; margin:1rem 0;"></div>
 
 <script src="{{ '/assets/js/demo.js' | relative_url }}"></script>
 
-<small><em>Live port of the actual NaviCubeOverlay — same geometry, same projection, same SLERP snapping. Runs natively in PySide6 via QPainter.</em></small>
+<small><em>Same geometry, same projection, same SLERP snapping as the actual widget. Runs natively in PySide6 via QPainter.</em></small>
 
 ---
 
-## What is this?
+## Why this exists
 
-**pyside-navicube** is a pure-Python PySide6 widget that renders an interactive 3D orientation cube as a 2D overlay. It talks to your 3D engine through two simple hooks:
+NavCube came out of work on [Osdag](https://osdag.fossee.in), an open-source structural steel design tool built on PythonOCC. Osdag opens multiple design tabs, each with its own OCC renderer. We wanted a navigation cube on each one.
+
+OCC's built-in ViewCube lives inside the OpenGL context — same lifecycle as the renderer. With multiple tabs being created and destroyed, we kept running into crashes: OCC objects outliving their context, double-free errors on tab close, the cube occasionally rendering into the wrong viewport. The root cause was lifecycle entanglement — the cube and the renderer were too tightly coupled.
+
+The solution was to take the cube out of OCC entirely. NavCube is a plain PySide6 QWidget that draws itself with QPainter. No OpenGL, no OCC handles, no shared context. When a tab closes, the widget is deleted like any other Qt widget. The crashes went away.
+
+The side effect was that the widget worked with any renderer — not just OCC. So it became its own library.
+
+---
+
+## How it works
+
+NavCube talks to your renderer through two hooks:
 
 - **You push** camera state in: `cube.push_camera(dx, dy, dz, ux, uy, uz)`
-- **It emits** orientation requests: `cube.viewOrientationRequested.connect(your_fn)`
+- **It emits** orientation requests out: `cube.viewOrientationRequested`
 
-That's the entire integration surface. Works with **OCC, VTK, OpenGL, Three.js** — anything with a camera.
+That's the entire integration surface. The widget doesn't know what's rendering behind it.
 
 ---
 
-## Key Features
+## Features
 
-| Feature | Description |
-|:--------|:------------|
-| **Zero Dependencies** | Core widget needs only PySide6 + NumPy. No OpenGL context sharing, no C++ bindings. |
-| **Full Style Control** | 60+ configurable fields via `NaviCubeStyle` — every color, size, font, label. Change at runtime. |
-| **Smooth Animations** | Quaternion SLERP with antipodal handling. No gimbal lock, no NaN crashes. |
-| **Z-up & Y-up** | Default Z-up (OCC/FreeCAD/Blender). One-line subclass for Y-up (Unity, Unreal, Three.js). |
-| **Ready Connectors** | Built-in sync for OCC and VTK. Write your own in ~50 lines. |
-| **DPI Aware** | Auto-scales from 96 DPI to 4K Retina. Recomputes when moved between monitors. |
+| | |
+|:--|:--|
+| **Renderer-agnostic** | Core widget only needs PySide6 + NumPy. No OCC, no VTK, no OpenGL. |
+| **Ready connectors** | `OCCNavCubeSync` and `VTKNavCubeSync` handle polling and signal wiring out of the box. |
+| **Full style control** | 60+ fields in `NavCubeStyle` — colors, fonts, labels, animation speed, opacity. All changeable at runtime. |
+| **Smooth animations** | Quaternion SLERP with antipodal handling. No gimbal lock, no NaN edge cases. |
+| **Z-up and Y-up** | Z-up by default (OCC, FreeCAD, Blender). One-line subclass for Y-up (Unity, Three.js). |
+| **DPI aware** | Scales from 96 DPI to 4K Retina. Recalculates when moved between monitors. |
 
 ---
 
 ## Install
 
 ```bash
-pip install pyside-navicube            # core (PySide6 + NumPy)
-pip install pyside-navicube[occ]       # + OCC connector
-pip install pyside-navicube[vtk]       # + VTK connector
+pip install navcube            # core only
+pip install navcube[occ]       # + OCC connector
+pip install navcube[vtk]       # + VTK connector
 ```
 
 ---
 
-## Quick Start
+## Quick start
 
 ```python
-from navicube import NaviCubeOverlay, NaviCubeStyle
+from navcube import NavCubeOverlay
 
-# Basic — default style
-cube = NaviCubeOverlay(parent=your_3d_widget)
+cube = NavCubeOverlay(parent=your_3d_widget)
 cube.show()
 
-# Connect: navicube face click → your renderer
 cube.viewOrientationRequested.connect(your_camera_update)
-
-# Connect: your renderer camera change → navicube
-cube.push_camera(dx, dy, dz, ux, uy, uz)  # inward dir + up vector
-```
-
-## Fully Customized
-
-```python
-style = NaviCubeStyle(
-    size=160,
-    face_color=(30, 40, 60),
-    text_color=(200, 220, 255),
-    hover_color=(0, 180, 255, 240),
-    font_family="Segoe UI",
-    labels={"TOP": "UP", "BOTTOM": "DN", "FRONT": "F",
-            "BACK": "B", "LEFT": "L", "RIGHT": "R"},
-    theme="dark",
-    show_gizmo=True,
-)
-
-cube = NaviCubeOverlay(parent=widget, style=style)
+cube.push_camera(dx, dy, dz, ux, uy, uz)
 ```
 
 ---
 
 ## Documentation
 
-| Page | What's inside |
-|:-----|:-------------|
-| [Getting Started]({{ '/getting-started' | relative_url }}) | Install, basic usage, signal flow, first integration |
-| [Style Reference]({{ '/style-reference' | relative_url }}) | Every `NaviCubeStyle` field — type, default, example |
-| [Coordinate Systems]({{ '/coordinate-systems' | relative_url }}) | Z-up vs Y-up, `_WORLD_ROT`, sign conventions |
-| [Connectors]({{ '/connectors' | relative_url }}) | OCC & VTK integration, writing custom connectors |
-| [API Reference]({{ '/api-reference' | relative_url }}) | Full class, method, and signal reference |
-| [Examples]({{ '/examples' | relative_url }}) | Copy-paste code for every common scenario |
+| | |
+|:--|:--|
+| [Getting Started]({{ '/getting-started' | relative_url }}) | Install, basic usage, first integration |
+| [Style Reference]({{ '/style-reference' | relative_url }}) | Every `NavCubeStyle` field |
+| [Coordinate Systems]({{ '/coordinate-systems' | relative_url }}) | Z-up vs Y-up, sign conventions |
+| [Connectors]({{ '/connectors' | relative_url }}) | OCC, VTK, writing custom connectors |
+| [API Reference]({{ '/api-reference' | relative_url }}) | Classes, methods, signals |
 | [Changelog]({{ '/changelog' | relative_url }}) | Version history |
 
 ---
 
-## Sign Convention Cheat Sheet
+## Sign convention
 
-| Direction | Value | Notes |
-|:----------|:------|:------|
-| `push_camera` d | **Inward** (eye → scene) | Same as OCC `cam.Direction()` |
-| `viewOrientationRequested` p | **Outward** (scene → eye) | Ready for OCC `SetProj()` |
-
-> **Mnemonic**: Read inward, write outward.
+| | |
+|:--|:--|
+| `push_camera` dx/dy/dz | **Inward** (eye → scene) — same as OCC `cam.Direction()` |
+| `viewOrientationRequested` px/py/pz | **Outward** (scene → eye) — ready for OCC `SetProj()` |

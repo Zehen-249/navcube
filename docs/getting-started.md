@@ -5,7 +5,7 @@ title: Getting Started
 
 # Getting Started
 
-This guide walks you through installing pyside-navicube, understanding its architecture, and writing your first integration.
+This guide walks you through installing navcube, understanding its architecture, and writing your first integration.
 
 ---
 
@@ -21,8 +21,8 @@ Optional, only if you use the built-in connectors:
 
 | Package | For |
 |:--------|:----|
-| pythonocc-core | `OCCNaviCubeSync` connector |
-| vtk | `VTKNaviCubeSync` connector |
+| pythonocc-core | `OCCNavCubeSync` connector |
+| vtk | `VTKNavCubeSync` connector |
 
 ---
 
@@ -30,31 +30,31 @@ Optional, only if you use the built-in connectors:
 
 ```bash
 # Core only (no renderer dependencies)
-pip install pyside-navicube
+pip install navcube
 
 # With OCC support
-pip install pyside-navicube[occ]
+pip install navcube[occ]
 
 # With VTK support
-pip install pyside-navicube[vtk]
+pip install navcube[vtk]
 ```
 
 To verify the installation:
 
 ```python
-from navicube import NaviCubeOverlay, NaviCubeStyle
-print("pyside-navicube installed successfully")
+from navcube import NavCubeOverlay, NavCubeStyle
+print("navcube installed successfully")
 ```
 
 ---
 
 ## Architecture overview
 
-pyside-navicube follows a strict separation between the **widget** (pure Qt 2D rendering) and **your 3D renderer**:
+navcube follows a strict separation between the **widget** (pure Qt 2D rendering) and **your 3D renderer**:
 
 ```
 ┌─────────────────────┐          ┌──────────────────────┐
-│   Your 3D Renderer  │          │   NaviCubeOverlay    │
+│   Your 3D Renderer  │          │   NavCubeOverlay    │
 │   (OCC / VTK / …)   │          │   (PySide6 QWidget)  │
 │                      │          │                      │
 │  Camera changes ─────┼── push_camera() ──►  Redraws   │
@@ -76,10 +76,10 @@ The widget never imports or links against any 3D library. All communication happ
 The generic integration pattern works with **any** 3D engine:
 
 ```python
-from navicube import NaviCubeOverlay
+from navcube import NavCubeOverlay
 
 # 1. Create the overlay, parented to your viewport widget
-cube = NaviCubeOverlay(parent=your_3d_widget)
+cube = NavCubeOverlay(parent=your_3d_widget)
 cube.show()
 
 # 2. Connect the signal to update your renderer's camera
@@ -152,10 +152,10 @@ The `overlay` constructor parameter controls how the widget behaves:
 
 ```python
 # Overlay mode (default): transparent floating window
-cube = NaviCubeOverlay(parent=viewport, overlay=True)
+cube = NavCubeOverlay(parent=viewport, overlay=True)
 
 # Inline mode: regular QWidget for layouts and docks
-cube = NaviCubeOverlay(parent=None, overlay=False)
+cube = NavCubeOverlay(parent=None, overlay=False)
 layout.addWidget(cube)
 ```
 
@@ -177,7 +177,7 @@ import sys
 import math
 from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel
 from PySide6.QtCore import Qt, QTimer
-from navicube import NaviCubeOverlay, NaviCubeStyle
+from navcube import NavCubeOverlay, NavCubeStyle
 
 class DemoWindow(QWidget):
     def __init__(self):
@@ -191,7 +191,7 @@ class DemoWindow(QWidget):
         layout.addWidget(self.label)
 
         # Create navicube as an overlay
-        self.cube = NaviCubeOverlay(parent=self)
+        self.cube = NavCubeOverlay(parent=self)
         self.cube.viewOrientationRequested.connect(self.on_orient)
         self.cube.show()
 

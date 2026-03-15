@@ -5,18 +5,18 @@ title: Connectors
 
 # Connectors
 
-Connectors bridge a specific 3D renderer to the NaviCubeOverlay widget. They handle camera polling, signal wiring, interaction state, and teardown so you do not have to.
+Connectors bridge a specific 3D renderer to the NavCubeOverlay widget. They handle camera polling, signal wiring, interaction state, and teardown so you do not have to.
 
 ---
 
-## OCC connector (`OCCNaviCubeSync`)
+## OCC connector (`OCCNavCubeSync`)
 
 The OCC connector lives in `navicube.connectors.occ` and is imported lazily so the base `navicube` package never pulls in OCC.
 
 ### Installation
 
 ```bash
-pip install pyside-navicube[occ]
+pip install navcube[occ]
 ```
 
 ### What it does
@@ -30,18 +30,18 @@ pip install pyside-navicube[occ]
 ### Full example
 
 ```python
-from navicube import NaviCubeOverlay
-from navicube.connectors.occ import OCCNaviCubeSync
+from navcube import NavCubeOverlay
+from navcube.connectors.occ import OCCNavCubeSync
 
 # Assuming you have an OCC viewer set up with a V3d_View
 # and a QWidget-based viewport
 
 # 1. Create the navicube overlay
-navicube = NaviCubeOverlay(parent=viewport_widget)
+navicube = NavCubeOverlay(parent=viewport_widget)
 navicube.show()
 
 # 2. Create the sync connector (starts polling immediately)
-sync = OCCNaviCubeSync(occ_view, navicube)
+sync = OCCNavCubeSync(occ_view, navicube)
 
 # 3. Wire interaction state in your viewer's mouse handlers
 class MyViewer(QWidget):
@@ -74,28 +74,28 @@ A fallback to `SetProj` / `SetUp` is included for older pythonocc builds that la
 
 ---
 
-## VTK connector (`VTKNaviCubeSync`)
+## VTK connector (`VTKNavCubeSync`)
 
 The VTK connector follows the same pattern as the OCC connector but bridges a VTK renderer.
 
 ### Installation
 
 ```bash
-pip install pyside-navicube[vtk]
+pip install navcube[vtk]
 ```
 
 ### Full example
 
 ```python
-from navicube import NaviCubeOverlay
-from navicube.connectors.vtk import VTKNaviCubeSync
+from navcube import NavCubeOverlay
+from navcube.connectors.vtk import VTKNavCubeSync
 
 # Assuming you have a VTK renderer and a QVTKRenderWindowInteractor
 
-navicube = NaviCubeOverlay(parent=vtk_widget)
+navicube = NavCubeOverlay(parent=vtk_widget)
 navicube.show()
 
-sync = VTKNaviCubeSync(vtk_renderer, navicube)
+sync = VTKNavCubeSync(vtk_renderer, navicube)
 
 # In your interactor style's mouse handlers:
 # sync.set_interaction_active(True)   # on press
@@ -252,7 +252,7 @@ Stop the timer and disconnect signals:
 
 ```python
 """
-my_engine_sync.py -- NaviCubeOverlay connector for MyEngine
+my_engine_sync.py -- NavCubeOverlay connector for MyEngine
 """
 import math
 from PySide6.QtCore import QTimer

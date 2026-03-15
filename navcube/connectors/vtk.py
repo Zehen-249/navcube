@@ -7,7 +7,7 @@ This is the only file in the library that imports VTK.
 Usage — plain VTK
 ─────────────────
     from navicube import NaviCubeOverlay
-    from navicube.connectors.vtk import VTKNaviCubeSync
+    from navcube.connectors.vtk import VTKNaviCubeSync
 
     cube = NaviCubeOverlay(parent=vtk_widget)
     cube.show()
@@ -25,7 +25,7 @@ Usage — PyVista
 ───────────────
     import pyvista as pv
     from navicube import NaviCubeOverlay
-    from navicube.connectors.vtk import VTKNaviCubeSync
+    from navcube.connectors.vtk import VTKNaviCubeSync
 
     pl = pv.Plotter()
     cube = NaviCubeOverlay(parent=None)  # or parent to plotter widget

@@ -3,13 +3,13 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "pyside-navicube"
+name = "navcube"
 version = "0.0.1"
-description = "FreeCAD-style NaviCube overlay widget for PySide6 — zero renderer dependency"
+description = "A 3D orientation cube widget for PySide6 — renderer-agnostic, drop-in ready"
 readme = "README.md"
 license = { text = "LGPL-2.1" }
 requires-python = ">=3.10"
-keywords = ["pyside6", "qt", "navicube", "viewcube", "3d", "cad", "orientation"]
+keywords = ["pyside6", "qt", "navcube", "navicube", "viewcube", "3d", "cad", "orientation"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)",
@@ -27,7 +27,7 @@ vtk = ["vtk"]
 
 [project.urls]
 Repository = "https://github.com/nishikantmandal007/pyside-navicube"
-Documentation = "https://osdag-org.github.io/pyside-navicube/"
+Documentation = "https://nishikantmandal007.github.io/pyside-navicube/"
 
 [tool.hatch.build.targets.wheel]
-packages = ["navicube"]
+packages = ["navcube"]

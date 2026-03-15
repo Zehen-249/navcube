@@ -1,4 +1,4 @@
-# Contributing to pyside-navicube
+# Contributing to navcube
 
 Thanks for your interest. Here's how the project is set up and how to contribute without breaking things.
 
@@ -121,12 +121,12 @@ pytest tests/ -v
 ## Project structure
 
 ```
-navicube/
-├── __init__.py          exports NaviCubeOverlay, NaviCubeStyle
+navcube/
+├── __init__.py          exports NavCubeOverlay, NavCubeStyle
 ├── widget.py            the actual widget — no OCC/VTK imports
 └── connectors/
-    ├── occ.py           OCCNaviCubeSync — bridges OCC V3d_View
-    └── vtk.py           VTKNaviCubeSync — bridges VTK renderer
+    ├── occ.py           OCCNavCubeSync — bridges OCC V3d_View
+    └── vtk.py           VTKNavCubeSync — bridges VTK renderer
 ```
 
 The core rule: `widget.py` must never import OCC, VTK, or any renderer. Connectors are the only place renderer imports live.

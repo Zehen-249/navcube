@@ -16,7 +16,7 @@ The simplest possible integration -- a navicube floating over a window:
 ```python
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow
-from navicube import NaviCubeOverlay
+from navcube import NavCubeOverlay
 
 app = QApplication(sys.argv)
 win = QMainWindow()
@@ -24,7 +24,7 @@ win.setWindowTitle("Minimal NaviCube")
 win.resize(800, 600)
 win.show()
 
-cube = NaviCubeOverlay(parent=win)
+cube = NavCubeOverlay(parent=win)
 cube.move(win.width() - 150, 10)
 cube.show()
 
@@ -50,7 +50,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout, QLabel, QDockWidget,
 )
 from PySide6.QtCore import Qt
-from navicube import NaviCubeOverlay, NaviCubeStyle
+from navcube import NavCubeOverlay, NavCubeStyle
 
 app = QApplication(sys.argv)
 win = QMainWindow()
@@ -68,8 +68,8 @@ dock_widget = QWidget()
 dock_layout = QVBoxLayout(dock_widget)
 
 # overlay=False makes it a regular QWidget
-cube = NaviCubeOverlay(parent=None, overlay=False,
-                       style=NaviCubeStyle(size=100, inactive_opacity=1.0))
+cube = NavCubeOverlay(parent=None, overlay=False,
+                       style=NavCubeStyle(size=100, inactive_opacity=1.0))
 dock_layout.addWidget(cube)
 dock_layout.addStretch()
 
@@ -94,14 +94,14 @@ A dark blue theme with orange highlights:
 ```python
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow
-from navicube import NaviCubeOverlay, NaviCubeStyle
+from navcube import NavCubeOverlay, NavCubeStyle
 
 app = QApplication(sys.argv)
 win = QMainWindow()
 win.resize(800, 600)
 win.show()
 
-style = NaviCubeStyle(
+style = NavCubeStyle(
     theme="dark",
     size=140,
 
@@ -131,7 +131,7 @@ style = NaviCubeStyle(
     shadow_offset_y=3.0,
 )
 
-cube = NaviCubeOverlay(parent=win, style=style)
+cube = NavCubeOverlay(parent=win, style=style)
 cube.move(win.width() - 170, 10)
 cube.show()
 
@@ -146,9 +146,9 @@ sys.exit(app.exec())
 ### German
 
 ```python
-from navicube import NaviCubeStyle
+from navcube import NavCubeStyle
 
-german_style = NaviCubeStyle(
+german_style = NavCubeStyle(
     labels={
         "TOP": "OBEN",
         "FRONT": "VORNE",
@@ -163,9 +163,9 @@ german_style = NaviCubeStyle(
 ### Japanese
 
 ```python
-from navicube import NaviCubeStyle
+from navcube import NavCubeStyle
 
-japanese_style = NaviCubeStyle(
+japanese_style = NavCubeStyle(
     font_family="Noto Sans CJK JP",
     font_fallback="SansSerif",
     font_weight="bold",
@@ -185,9 +185,9 @@ japanese_style = NaviCubeStyle(
 ### Russian
 
 ```python
-from navicube import NaviCubeStyle
+from navcube import NavCubeStyle
 
-russian_style = NaviCubeStyle(
+russian_style = NavCubeStyle(
     font_family="DejaVu Sans",
     labels={
         "TOP": "\u0412\u0415\u0420\u0425",         # ВЕРХ
@@ -210,9 +210,9 @@ For engines that use Y-up (Three.js, Unity, glTF viewers):
 import sys
 import numpy as np
 from PySide6.QtWidgets import QApplication, QMainWindow
-from navicube import NaviCubeOverlay
+from navcube import NavCubeOverlay
 
-class YUpNaviCube(NaviCubeOverlay):
+class YUpNaviCube(NavCubeOverlay):
     """NaviCube for Y-up coordinate systems."""
     _WORLD_ROT = np.array([
         [1,  0,  0],
@@ -259,8 +259,8 @@ from PySide6.QtCore import Qt
 from OCC.Display.SimpleGui import init_display
 from OCC.Core.BRepPrimAPI import BRepPrimAPI_MakeBox
 
-from navicube import NaviCubeOverlay
-from navicube.connectors.occ import OCCNaviCubeSync
+from navcube import NavCubeOverlay
+from navcube.connectors.occ import OCCNavCubeSync
 
 
 class OCCViewerWindow(QMainWindow):
@@ -283,11 +283,11 @@ class OCCViewerWindow(QMainWindow):
 
         # Create and connect the navicube
         canvas = display.GetWidget()  # The QWidget hosting the OCC view
-        self.navicube = NaviCubeOverlay(parent=canvas)
+        self.navicube = NavCubeOverlay(parent=canvas)
         self.navicube.show()
 
         # Create the sync connector
-        self.sync = OCCNaviCubeSync(view, self.navicube)
+        self.sync = OCCNavCubeSync(view, self.navicube)
 
         # Position the navicube
         self.navicube.move(canvas.width() - 150, 10)
@@ -316,8 +316,8 @@ from PySide6.QtWidgets import QApplication, QMainWindow
 import vtkmodules.all as vtk
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
-from navicube import NaviCubeOverlay
-from navicube.connectors.vtk import VTKNaviCubeSync
+from navcube import NavCubeOverlay
+from navcube.connectors.vtk import VTKNavCubeSync
 
 
 class VTKViewerWindow(QMainWindow):
@@ -344,12 +344,12 @@ class VTKViewerWindow(QMainWindow):
         renderer.ResetCamera()
 
         # Create the navicube
-        self.navicube = NaviCubeOverlay(parent=self.vtk_widget)
+        self.navicube = NavCubeOverlay(parent=self.vtk_widget)
         self.navicube.show()
         self.navicube.move(self.vtk_widget.width() - 150, 10)
 
         # Connect via VTK sync
-        self.sync = VTKNaviCubeSync(renderer, self.navicube)
+        self.sync = VTKNavCubeSync(renderer, self.navicube)
 
         self.vtk_widget.Initialize()
         self.vtk_widget.Start()
@@ -377,7 +377,7 @@ import sys
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget,
 )
-from navicube import NaviCubeOverlay, NaviCubeStyle
+from navcube import NavCubeOverlay, NavCubeStyle
 
 app = QApplication(sys.argv)
 win = QMainWindow()
@@ -388,14 +388,14 @@ central = QWidget()
 layout = QVBoxLayout(central)
 win.setCentralWidget(central)
 
-cube = NaviCubeOverlay(parent=win)
+cube = NavCubeOverlay(parent=win)
 cube.show()
 cube.move(win.width() - 150, 10)
 
 is_dark = [False]
 
-light_style = NaviCubeStyle(theme="light")
-dark_style = NaviCubeStyle(
+light_style = NavCubeStyle(theme="light")
+dark_style = NavCubeStyle(
     theme="dark",
     face_color_dark=(60, 60, 70),
     edge_color_dark=(45, 45, 55),
@@ -425,7 +425,7 @@ A minimal connector template for any 3D engine:
 
 ```python
 """
-Connector template for integrating NaviCubeOverlay with a custom 3D engine.
+Connector template for integrating NavCubeOverlay with a custom 3D engine.
 Replace the placeholder method calls with your engine's API.
 """
 import math
@@ -511,9 +511,9 @@ Set a custom home orientation that the Home button returns to:
 
 ```python
 import math
-from navicube import NaviCubeOverlay
+from navcube import NavCubeOverlay
 
-cube = NaviCubeOverlay(parent=viewport)
+cube = NavCubeOverlay(parent=viewport)
 cube.show()
 
 # Set home to look straight at the FRONT face
@@ -533,9 +533,9 @@ cube.set_home(-d, d, -d, 0.0, 0.0, 1.0)
 Show the orientation gizmo with custom colors:
 
 ```python
-from navicube import NaviCubeOverlay, NaviCubeStyle
+from navcube import NavCubeOverlay, NavCubeStyle
 
-style = NaviCubeStyle(
+style = NavCubeStyle(
     show_gizmo=True,
     gizmo_x_color=(255, 50, 50),    # Bright red
     gizmo_y_color=(50, 255, 50),    # Bright green
@@ -543,6 +543,6 @@ style = NaviCubeStyle(
     gizmo_font_size=10,
 )
 
-cube = NaviCubeOverlay(parent=viewport, style=style)
+cube = NavCubeOverlay(parent=viewport, style=style)
 cube.show()
 ```

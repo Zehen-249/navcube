@@ -5,23 +5,23 @@ title: Style Reference
 
 # Style Reference
 
-Complete documentation of every field in the `NaviCubeStyle` dataclass. This is the single point of control for all visual and behavioral aspects of the NaviCube widget.
+Complete documentation of every field in the `NavCubeStyle` dataclass. This is the single point of control for all visual and behavioral aspects of the NaviCube widget.
 
 ---
 
 ## Overview
 
-`NaviCubeStyle` is a Python `dataclass` that holds every configurable parameter of the NaviCube. Pass it at construction time or swap it at runtime:
+`NavCubeStyle` is a Python `dataclass` that holds every configurable parameter of the NaviCube. Pass it at construction time or swap it at runtime:
 
 ```python
-from navicube import NaviCubeOverlay, NaviCubeStyle
+from navcube import NavCubeOverlay, NavCubeStyle
 
 # At construction
-style = NaviCubeStyle(size=150, theme="dark")
-cube = NaviCubeOverlay(parent=win, style=style)
+style = NavCubeStyle(size=150, theme="dark")
+cube = NavCubeOverlay(parent=win, style=style)
 
 # At runtime
-new_style = NaviCubeStyle(size=100, theme="light", hover_color=(255, 80, 0, 235))
+new_style = NavCubeStyle(size=100, theme="light", hover_color=(255, 80, 0, 235))
 cube.set_style(new_style)
 ```
 
@@ -53,10 +53,10 @@ These fields control the physical dimensions of the widget and the 3D projection
 
 ```python
 # Large cube for a 4K monitor
-style = NaviCubeStyle(size=180)
+style = NavCubeStyle(size=180)
 
 # Compact cube for a sidebar
-style = NaviCubeStyle(size=80)
+style = NavCubeStyle(size=80)
 ```
 
 ### `padding`
@@ -69,10 +69,10 @@ style = NaviCubeStyle(size=80)
 
 ```python
 # More room for controls and shadow
-style = NaviCubeStyle(padding=20)
+style = NavCubeStyle(padding=20)
 
 # Tight fit (controls may clip)
-style = NaviCubeStyle(padding=4)
+style = NavCubeStyle(padding=4)
 ```
 
 ### `scale`
@@ -85,10 +85,10 @@ style = NaviCubeStyle(padding=4)
 
 ```python
 # Bigger cube within the same widget size
-style = NaviCubeStyle(scale=32.0)
+style = NavCubeStyle(scale=32.0)
 
 # Smaller cube with more margin
-style = NaviCubeStyle(scale=20.0)
+style = NavCubeStyle(scale=20.0)
 ```
 
 ### `chamfer`
@@ -101,10 +101,10 @@ style = NaviCubeStyle(scale=20.0)
 
 ```python
 # Sharp, minimal bevels
-style = NaviCubeStyle(chamfer=0.05)
+style = NavCubeStyle(chamfer=0.05)
 
 # Rounded, heavily beveled look
-style = NaviCubeStyle(chamfer=0.20)
+style = NavCubeStyle(chamfer=0.20)
 ```
 
 ---
@@ -123,13 +123,13 @@ These fields control the speed and timing of face-click animations and the inter
 
 ```python
 # Snappy, quick transitions
-style = NaviCubeStyle(animation_ms=120)
+style = NavCubeStyle(animation_ms=120)
 
 # Slow, cinematic transitions
-style = NaviCubeStyle(animation_ms=600)
+style = NavCubeStyle(animation_ms=600)
 
 # Instant (no animation)
-style = NaviCubeStyle(animation_ms=1)
+style = NavCubeStyle(animation_ms=1)
 ```
 
 ### `tick_ms`
@@ -142,10 +142,10 @@ style = NaviCubeStyle(animation_ms=1)
 
 ```python
 # Higher frame rate for smoother animation
-style = NaviCubeStyle(tick_ms=8)
+style = NavCubeStyle(tick_ms=8)
 
 # Lower frame rate to save CPU
-style = NaviCubeStyle(tick_ms=33)
+style = NavCubeStyle(tick_ms=33)
 ```
 
 ---
@@ -164,10 +164,10 @@ These fields control visibility, interaction sensitivity, and rendering behavior
 
 ```python
 # Show fewer faces (only clearly visible ones)
-style = NaviCubeStyle(visibility_threshold=0.0)
+style = NavCubeStyle(visibility_threshold=0.0)
 
 # Show more faces (including grazing angles)
-style = NaviCubeStyle(visibility_threshold=0.25)
+style = NavCubeStyle(visibility_threshold=0.25)
 ```
 
 ### `orbit_step_deg`
@@ -180,10 +180,10 @@ style = NaviCubeStyle(visibility_threshold=0.25)
 
 ```python
 # Fine-grained orbit control
-style = NaviCubeStyle(orbit_step_deg=5.0)
+style = NavCubeStyle(orbit_step_deg=5.0)
 
 # Coarse orbit steps
-style = NaviCubeStyle(orbit_step_deg=45.0)
+style = NavCubeStyle(orbit_step_deg=45.0)
 ```
 
 ### `sync_epsilon`
@@ -196,10 +196,10 @@ style = NaviCubeStyle(orbit_step_deg=45.0)
 
 ```python
 # More sensitive (redraw on tiny changes)
-style = NaviCubeStyle(sync_epsilon=1e-5)
+style = NavCubeStyle(sync_epsilon=1e-5)
 
 # Less sensitive (ignore small jitter)
-style = NaviCubeStyle(sync_epsilon=1e-2)
+style = NavCubeStyle(sync_epsilon=1e-2)
 ```
 
 ### `inactive_opacity`
@@ -212,13 +212,13 @@ style = NaviCubeStyle(sync_epsilon=1e-2)
 
 ```python
 # Nearly invisible when not hovered
-style = NaviCubeStyle(inactive_opacity=0.3)
+style = NavCubeStyle(inactive_opacity=0.3)
 
 # Always fully visible
-style = NaviCubeStyle(inactive_opacity=1.0)
+style = NavCubeStyle(inactive_opacity=1.0)
 
 # Semi-transparent
-style = NaviCubeStyle(inactive_opacity=0.5)
+style = NavCubeStyle(inactive_opacity=0.5)
 ```
 
 ---
@@ -235,13 +235,13 @@ style = NaviCubeStyle(inactive_opacity=0.5)
 
 ```python
 # Light from top-right
-style = NaviCubeStyle(light_direction=(1.0, -1.0, -2.0))
+style = NavCubeStyle(light_direction=(1.0, -1.0, -2.0))
 
 # Flat lighting (no shading)
-style = NaviCubeStyle(light_direction=(0.0, 0.0, -1.0))
+style = NavCubeStyle(light_direction=(0.0, 0.0, -1.0))
 
 # Dramatic side lighting
-style = NaviCubeStyle(light_direction=(-2.0, 0.0, 0.0))
+style = NavCubeStyle(light_direction=(-2.0, 0.0, 0.0))
 ```
 
 The shading formula is: `shade = 0.85 + 0.15 * max(0, dot(face_normal, -light_direction))`. This means the darkest a face can get is 85% of its base color, and the brightest is 100%.
@@ -268,13 +268,13 @@ Valid values:
 
 ```python
 # Auto-detect from system
-style = NaviCubeStyle(theme="auto")
+style = NavCubeStyle(theme="auto")
 
 # Force dark
-style = NaviCubeStyle(theme="dark")
+style = NavCubeStyle(theme="dark")
 
 # Force light
-style = NaviCubeStyle(theme="light")
+style = NavCubeStyle(theme="light")
 ```
 
 ---
@@ -496,9 +496,9 @@ These fields control how face labels are rendered.
 | **Description** | Primary font family name for face labels. If this font is not available on the system, Qt falls back to the style hint specified by `font_fallback`. |
 
 ```python
-style = NaviCubeStyle(font_family="Helvetica Neue")
-style = NaviCubeStyle(font_family="Segoe UI")
-style = NaviCubeStyle(font_family="Noto Sans CJK JP")  # For Japanese labels
+style = NavCubeStyle(font_family="Helvetica Neue")
+style = NavCubeStyle(font_family="Segoe UI")
+style = NavCubeStyle(font_family="Noto Sans CJK JP")  # For Japanese labels
 ```
 
 ### `font_fallback`
@@ -512,7 +512,7 @@ style = NaviCubeStyle(font_family="Noto Sans CJK JP")  # For Japanese labels
 Valid values: `"SansSerif"`, `"Serif"`, `"Monospace"`, `"TypeWriter"`, `"Cursive"`, `"Fantasy"`, `"System"`.
 
 ```python
-style = NaviCubeStyle(font_fallback="Monospace")
+style = NavCubeStyle(font_fallback="Monospace")
 ```
 
 ### `font_weight`
@@ -527,10 +527,10 @@ Valid values: `"thin"`, `"extralight"`, `"light"`, `"normal"`, `"medium"`, `"dem
 
 ```python
 # Lighter labels
-style = NaviCubeStyle(font_weight="normal")
+style = NavCubeStyle(font_weight="normal")
 
 # Maximum weight
-style = NaviCubeStyle(font_weight="black")
+style = NavCubeStyle(font_weight="black")
 ```
 
 ### `label_max_width_ratio`
@@ -543,10 +543,10 @@ style = NaviCubeStyle(font_weight="black")
 
 ```python
 # Allow text to fill almost the entire face
-style = NaviCubeStyle(label_max_width_ratio=0.90)
+style = NavCubeStyle(label_max_width_ratio=0.90)
 
 # Compact text with lots of margin
-style = NaviCubeStyle(label_max_width_ratio=0.50)
+style = NavCubeStyle(label_max_width_ratio=0.50)
 ```
 
 ### `label_max_height_ratio`
@@ -559,7 +559,7 @@ style = NaviCubeStyle(label_max_width_ratio=0.50)
 
 ```python
 # Taller text allowed
-style = NaviCubeStyle(label_max_height_ratio=0.60)
+style = NavCubeStyle(label_max_height_ratio=0.60)
 ```
 
 ### `min_font_size`
@@ -572,10 +572,10 @@ style = NaviCubeStyle(label_max_height_ratio=0.60)
 
 ```python
 # Allow very small text for long labels
-style = NaviCubeStyle(min_font_size=20.0)
+style = NavCubeStyle(min_font_size=20.0)
 
 # Force large text
-style = NaviCubeStyle(min_font_size=60.0)
+style = NavCubeStyle(min_font_size=60.0)
 ```
 
 ---
@@ -594,13 +594,13 @@ The keys must be exactly: `TOP`, `FRONT`, `LEFT`, `BACK`, `RIGHT`, `BOTTOM`.
 
 ```python
 # German labels
-style = NaviCubeStyle(labels={
+style = NavCubeStyle(labels={
     "TOP": "OBEN", "FRONT": "VORNE", "LEFT": "LINKS",
     "BACK": "HINTEN", "RIGHT": "RECHTS", "BOTTOM": "UNTEN",
 })
 
 # Japanese labels
-style = NaviCubeStyle(
+style = NavCubeStyle(
     font_family="Noto Sans CJK JP",
     labels={
         "TOP": "\u4e0a", "FRONT": "\u524d", "LEFT": "\u5de6",
@@ -609,7 +609,7 @@ style = NaviCubeStyle(
 )
 
 # Short labels
-style = NaviCubeStyle(labels={
+style = NavCubeStyle(labels={
     "TOP": "T", "FRONT": "F", "LEFT": "L",
     "BACK": "Bk", "RIGHT": "R", "BOTTOM": "Bo",
 })
@@ -629,7 +629,7 @@ style = NaviCubeStyle(labels={
 
 ```python
 # Cube only, no surrounding buttons
-style = NaviCubeStyle(show_controls=False)
+style = NavCubeStyle(show_controls=False)
 ```
 
 The control elements include:
@@ -648,7 +648,7 @@ The control elements include:
 
 ```python
 # Show the XYZ gizmo
-style = NaviCubeStyle(show_gizmo=True)
+style = NavCubeStyle(show_gizmo=True)
 ```
 
 ### `gizmo_x_color`
@@ -697,10 +697,10 @@ style = NaviCubeStyle(show_gizmo=True)
 
 ```python
 # Thick borders
-style = NaviCubeStyle(border_width_main=3.5)
+style = NavCubeStyle(border_width_main=3.5)
 
 # No visible borders
-style = NaviCubeStyle(border_width_main=0.0)
+style = NavCubeStyle(border_width_main=0.0)
 ```
 
 ### `border_width_secondary`
@@ -741,10 +741,10 @@ style = NaviCubeStyle(border_width_main=0.0)
 
 ```python
 # No shadow
-style = NaviCubeStyle(shadow_color=(0, 0, 0, 0))
+style = NavCubeStyle(shadow_color=(0, 0, 0, 0))
 
 # Dramatic shadow
-style = NaviCubeStyle(
+style = NavCubeStyle(
     shadow_offset_x=4.0,
     shadow_offset_y=5.0,
     shadow_color=(0, 0, 0, 100),
@@ -817,7 +817,7 @@ style = NaviCubeStyle(
 ## Example: dark blue theme
 
 ```python
-style = NaviCubeStyle(
+style = NavCubeStyle(
     theme="dark",
     face_color_dark=(40, 60, 120),
     edge_color_dark=(30, 45, 90),
@@ -836,7 +836,7 @@ style = NaviCubeStyle(
 ## Example: minimal wireframe theme
 
 ```python
-style = NaviCubeStyle(
+style = NavCubeStyle(
     theme="light",
     face_color=(255, 255, 255),
     edge_color=(255, 255, 255),
@@ -857,16 +857,16 @@ style = NaviCubeStyle(
 ## Runtime style changes with `set_style()`
 
 ```python
-from navicube import NaviCubeOverlay, NaviCubeStyle
+from navcube import NavCubeOverlay, NavCubeStyle
 
-cube = NaviCubeOverlay(parent=win)
+cube = NavCubeOverlay(parent=win)
 
 # Later, switch to a custom style
-dark_style = NaviCubeStyle(theme="dark", size=150)
+dark_style = NavCubeStyle(theme="dark", size=150)
 cube.set_style(dark_style)
 
 # Switch back to defaults
-cube.set_style(NaviCubeStyle())
+cube.set_style(NavCubeStyle())
 ```
 
 `set_style()` performs the following steps internally:
